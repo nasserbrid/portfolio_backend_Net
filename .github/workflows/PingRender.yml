@@ -1,0 +1,21 @@
+name: Ping Render backend every 10 minutes
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping-render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Render API to keep backend awake
+        run: |
+          echo "Pinging Render backend..."
+          http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://portfolio-backend-net.onrender.com/api/Project)
+          echo "Response code: $http_code"
+          if [ "$http_code" -ne 200 ]; then
+            echo "⚠️ Le backend ne répond pas correctement !"
+            exit 1
+          fi
