@@ -100,7 +100,8 @@ app.UseSwaggerUI(c =>
     });
 //}
 
-//app.UseHttpsRedirection(); //car déjà gérer par Render
+app.UseHttpsRedirection(); //car déjà gérer par Render
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
