@@ -3,13 +3,41 @@ using portfolio_backend_Csharp.Data;
 using portfolio_backend_Csharp.Repositories;
 using portfolio_backend_Csharp.Services;
 using DotNetEnv;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
+var renderDbUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
-builder.Configuration["ConnectionStrings:SqlDbConnection"] = Environment.GetEnvironmentVariable("SQL_DB_CONNECTION");
+
+if (!string.IsNullOrEmpty(renderDbUrl))
+{
+    var databaseUrlFixed = renderDbUrl.Replace("postgresql://", "postgres://");
+
+    var databaseUri = new Uri(databaseUrlFixed);
+
+    var userInfo = databaseUri.UserInfo.Split(':');
+
+    var npgsqlBuilder = new NpgsqlConnectionStringBuilder
+    {
+        Host = databaseUri.Host,
+        Port = databaseUri.Port > 0 ? databaseUri.Port : 5432,
+        Username = userInfo[0],
+        Password = userInfo[1],
+        Database = databaseUri.AbsolutePath.TrimStart('/'),
+        SslMode = SslMode.Require,
+        TrustServerCertificate = false
+    };
+
+    builder.Configuration["ConnectionStrings:SqlDbConnection"] = npgsqlBuilder.ConnectionString;
+}
+else
+{
+    throw new Exception("DATABASE_URL non trouvé dans les variables d'environnement");
+}
+
 builder.Configuration["CloudinarySettings:CloudName"] = Environment.GetEnvironmentVariable("CLOUDNAME");
 builder.Configuration["CloudinarySettings:ApiKey"] = Environment.GetEnvironmentVariable("API_KEY");
 builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironmentVariable("API_SECRET");
