@@ -9,16 +9,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
-var renderDbUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? throw new InvalidOperationException("DATABASE_URL non trouvé dans les variables d'environnement");
 
-if (!string.IsNullOrEmpty(renderDbUrl))
+string connectionString;
+
+if (databaseUrl.StartsWith("Host="))
 {
-    var databaseUrlFixed = renderDbUrl.Replace("postgresql://", "postgres://");
+    // ? Format PostgreSQL local
+    connectionString = databaseUrl;
+}
+else if (databaseUrl.StartsWith("postgresql://") || databaseUrl.StartsWith("postgres://"))
+{
+    // ? Format Render à parser
+    var databaseUrlFixed = databaseUrl.Replace("postgresql://", "postgres://");
 
     var databaseUri = new Uri(databaseUrlFixed);
-
     var userInfo = databaseUri.UserInfo.Split(':');
+    if (userInfo.Length != 2)
+        throw new InvalidOperationException("Format USER:PASS invalide dans DATABASE_URL");
 
     var npgsqlBuilder = new NpgsqlConnectionStringBuilder
     {
@@ -28,15 +38,16 @@ if (!string.IsNullOrEmpty(renderDbUrl))
         Password = userInfo[1],
         Database = databaseUri.AbsolutePath.TrimStart('/'),
         SslMode = SslMode.Require,
-        TrustServerCertificate = false
+        TrustServerCertificate = true
     };
 
-    builder.Configuration["ConnectionStrings:SqlDbConnection"] = npgsqlBuilder.ConnectionString;
+    connectionString = npgsqlBuilder.ConnectionString;
 }
 else
 {
-    throw new Exception("DATABASE_URL non trouvé dans les variables d'environnement");
+    throw new InvalidOperationException("Format de DATABASE_URL non reconnu.");
 }
+
 
 builder.Configuration["CloudinarySettings:CloudName"] = Environment.GetEnvironmentVariable("CLOUDNAME");
 builder.Configuration["CloudinarySettings:ApiKey"] = Environment.GetEnvironmentVariable("API_KEY");
@@ -44,9 +55,9 @@ builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironme
 builder.Configuration["Email:Username"] = Environment.GetEnvironmentVariable("USERNAME");
 builder.Configuration["Email:Password"] = Environment.GetEnvironmentVariable("PASSWORD");
 
+builder.Configuration["ConnectionStrings:SqlDbConnection"] = connectionString;
 
-
-var connectionString = builder.Configuration.GetConnectionString("SqlDbConnection");
+//var connectionString = builder.Configuration.GetConnectionString("SqlDbConnection");
 
 
 
