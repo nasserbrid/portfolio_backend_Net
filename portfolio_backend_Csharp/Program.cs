@@ -37,8 +37,8 @@ else if (databaseUrl.StartsWith("postgresql://") || databaseUrl.StartsWith("post
         Username = userInfo[0],
         Password = userInfo[1],
         Database = databaseUri.AbsolutePath.TrimStart('/'),
-        SslMode = SslMode.Require,
-        TrustServerCertificate = true
+        SslMode = SslMode.Require
+        //TrustServerCertificate = true
     };
 
     connectionString = npgsqlBuilder.ConnectionString;

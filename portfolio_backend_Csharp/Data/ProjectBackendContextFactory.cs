@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Npgsql;
+using DotNetEnv;
 
 namespace portfolio_backend_Csharp.Data
 {
@@ -9,6 +10,7 @@ namespace portfolio_backend_Csharp.Data
     {
         public ProjectBackendContext CreateDbContext(string[] args)
         {
+            Env.Load();
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL")
                 ?? throw new InvalidOperationException("DATABASE_URL non trouvé");
 
