@@ -13,7 +13,7 @@ jobs:
       - name: Call Render API to keep backend awake
         run: |
           echo "Pinging Render backend..."
-          http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://portfolio-backend-net.onrender.com/api/Project)
+          http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 portfolio-backend-net.onrender.com/api/Project)
           echo "Response code: $http_code"
           if [ "$http_code" -ne 200 ]; then
             echo "⚠️ Le backend ne répond pas correctement !"
