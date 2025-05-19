@@ -2,7 +2,7 @@ name: Ping Render backend every 10 minutes
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/10 * * * *" # toutes les 10 minutes
   workflow_dispatch:
 
 jobs:
@@ -13,9 +13,8 @@ jobs:
       - name: Call Render API to keep backend awake
         run: |
           echo "Pinging Render backend..."
-          http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 https://portfolio-backend-net.onrender.com/api/Project)
+          http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://portfolio-backend-net.onrender.com/api/Project || echo "000")
           echo "Response code: $http_code"
-          if [ "$http_code" -ne 200 ]; then
-            echo "⚠️ Le backend ne répond pas correctement !"
-            exit 1
+          if [ "$http_code" = "000" ]; then
+            echo "⚠️ Timeout ou erreur réseau, mais on continue quand même (objectif: garder le backend réveillé)"
           fi

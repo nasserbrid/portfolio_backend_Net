@@ -31,8 +31,8 @@ namespace portfolio_backend_Csharp.Services
                 File = new FileDescription(file.FileName, stream),
                 UseFilename = true,
                 UniqueFilename = true,
-                Overwrite = false
-                //Transformation = new Transformation().Crop("limit").Width(800).Height(600)
+                Overwrite = false,
+                Transformation = new Transformation().Crop("limit").Width(800).Height(600)
             };
 
             var result = await _cloudinary.UploadAsync(uploadParams);

@@ -37,9 +37,7 @@ namespace portfolio_backend_Csharp.Controllers
 
         // POST: api/Project
         [HttpPost]
-        public async Task<ActionResult<Project>> CreateProject(
-            [FromForm] Project project,
-            IFormFile? imageFile)
+        public async Task<ActionResult<Project>> CreateProject([FromForm] Project project,IFormFile? imageFile)
         {
             var createdProject = await _projectService.CreateProject(project, imageFile);
             return CreatedAtAction(nameof(GetProjectById), new { id = createdProject.Id }, createdProject);
