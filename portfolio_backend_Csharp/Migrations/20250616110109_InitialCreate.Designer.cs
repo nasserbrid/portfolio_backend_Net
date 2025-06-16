@@ -12,7 +12,7 @@ using portfolio_backend_Csharp.Data;
 namespace portfolio_backend_C_.Migrations
 {
     [DbContext(typeof(ProjectBackendContext))]
-    [Migration("20250516105137_InitialCreate")]
+    [Migration("20250616110109_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

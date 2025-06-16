@@ -17,12 +17,12 @@ string connectionString;
 
 if (databaseUrl.StartsWith("Host="))
 {
-    // ? Format PostgreSQL local
+    //Format PostgreSQL local
     connectionString = databaseUrl;
 }
 else if (databaseUrl.StartsWith("postgresql://") || databaseUrl.StartsWith("postgres://"))
 {
-    // ? Format Render à parser
+    //Format Render à parser
     var databaseUrlFixed = databaseUrl.Replace("postgresql://", "postgres://");
 
     var databaseUri = new Uri(databaseUrlFixed);
