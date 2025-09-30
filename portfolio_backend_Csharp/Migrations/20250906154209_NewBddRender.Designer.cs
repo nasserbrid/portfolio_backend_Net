@@ -12,8 +12,8 @@ using portfolio_backend_Csharp.Data;
 namespace portfolio_backend_C_.Migrations
 {
     [DbContext(typeof(ProjectBackendContext))]
-    [Migration("20250616110109_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250906154209_NewBddRender")]
+    partial class NewBddRender
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
